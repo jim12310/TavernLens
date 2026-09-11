@@ -26,7 +26,7 @@ This is the source snapshot of the current Windows tracker. It is a .NET Framewo
 5. Run `node src/update-data.cjs` to populate the data directory from public sources. Optional card-art caching: `node src/cache-art.cjs`.
 6. Run `powershell -ExecutionPolicy Bypass -File Build.ps1` and launch TavernLens.exe.
 
-Use the app's Setup and sources screen to configure Hearthstone logging. An installer is available on the website for people who do not want to build the source.
+In Setup and sources, click Enable tracking if logging is missing, then fully restart Hearthstone and enter a match. Version 1.0.1 detects the running game installation and searches the log root and session folders. An installer is available on the website for people who do not want to build the source.
 
 ## Repository contents
 
@@ -42,3 +42,4 @@ Personal settings, ratings, match history, sessions, downloaded card caches, com
 Independent project, not affiliated with Blizzard, HearthSim, HSReplay or Firestone. Hearthstone card artwork, names and text belong to their respective owners. Public data adapters use HearthstoneJSON, Battlegrounds Buddy and other sources identified in the code. Combat simulation uses Firestone packages. See GAME-READER-NOTICE.txt and simulator/THIRD-PARTY-NOTICES.txt for third-party components.
 
 No blanket license is granted here for third-party code or artwork. A project-wide license has not yet been selected.
+
