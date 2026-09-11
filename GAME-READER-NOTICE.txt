@@ -1,0 +1,8 @@
+Game-state reader provenance
+
+HearthMirror.dll and untapped-scry-dotnet.dll are unmodified binaries supplied with the official HearthSim Hearthstone Deck Tracker v1.55.6 release:
+https://github.com/HearthSim/Hearthstone-Deck-Tracker/releases/tag/v1.55.6
+
+Newtonsoft.Json.dll and System.Reflection.DispatchProxy.dll are the matching dependency versions supplied in that release. Their respective ownership and license terms remain applicable. TavernLens does not claim authorship of these components.
+
+The integration calls GetSceneMgrState, GetSelectedBattlegroundsGameMode and GetBattlegroundRatingInfo. It does not request collection, account identity, friends or other account data. No game writes are issued by this integration.

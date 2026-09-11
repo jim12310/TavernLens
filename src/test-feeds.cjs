@@ -1,0 +1,13 @@
+const assert=require('node:assert/strict');
+const {heroes,comps,board,patch}=require('./update-data.cjs');
+const rows=heroes('<tr data-name="Test Hero"><td></td><td>1</td><td><a href="/heroes/test"><img src="https://art.hearthstonejson.com/v1/orig/TEST.png">Test Hero</a></td><td>4.25</td><td>12.3%</td><td></td><td></td><td>1.2k</td></tr>');
+assert.equal(rows[0].avg,4.25);assert.equal(rows[0].games,'1.2k');assert.equal(rows[0].id,'TEST');
+const cs=comps('<section>Power Tier A<a data-filter-list-target="item" data-name="Test Comp" href="/comps/test">1st: 10.2% Top-4: 49.2% Games: 1.1k Avg Placement 4.6</a></section>');
+assert.equal(cs[0].tier,'A');assert.equal(cs[0].top4,49.2);
+const b=board('<!-- Board cards --><span>Core</span><img src="/orig/CORE.png"><span>Add-ons</span><img src="/orig/OPTIONAL.png"><!-- Best heroes for this comp --><img src="/orig/HERO.png">');
+assert.deepEqual(b,{core:['CORE'],addons:['OPTIONAL']});
+assert.throws(()=>board('<html>Service unavailable</html>'));
+assert.throws(()=>patch('<html>Changed source</html>'));
+const p=patch('var stickyBlogList = [{"title":"1.2.3 Patch Notes","publish":1000,"id":1,"slug":"test"}];');
+assert.equal(p.version,'1.2.3');assert.deepEqual(heroes('unavailable'),[]);
+console.log('10 feed adapter assertions passed.');

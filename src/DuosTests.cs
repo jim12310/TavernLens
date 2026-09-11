@@ -1,0 +1,16 @@
+using System;using System.Linq;using System.Drawing;
+namespace TavernLens {
+public static class DuosTests {
+ public static int Run(){int count=0;Action<bool,string> check=(ok,name)=>{if(!ok)throw new Exception("Duos test: "+name);count++;};var c=new Catalog();var exclusive=c.Cards.cards.First(x=>x.pool&&x.duosOnly);check(!c.Available(exclusive),"Solo excludes Duos pool");c.Duos=true;check(c.Available(exclusive)&&c.Available(c.Golden(exclusive.id)),"Duos includes correct normal and golden cards");check(c.Meta.heroes.Count>30&&c.Meta.heroes.All(h=>h.avg>=1&&h.avg<=4),"Duos team hero placements");check(Object.ReferenceEquals(c.BuildMeta,c.SoloMeta)&&c.BuildMeta.comps.Count>=5&&c.BuildMeta.comps.All(x=>!x.unranked),"Both modes use standard Solo guides");check(RatingReader.DetectMode(new[]{"Rating","Duos"})=="Duos","automatic Duos label");check(RatingReader.DetectMode(new[]{"Solo","Duos"})==null,"ambiguous rating mode withheld");
+ var s=new MatchState{Mode="GT_BATTLEGROUNDS_DUO",Started=true,Key="duos-test",GameId=1};s.E(1).Tags["TURN"]="1";s.Names["GameEntity"]=1;
+ var p=s.E(10);p.Tags["CARDTYPE"]="PLAYER";p.Tags["PLAYER_ID"]="1";p.Tags["CONTROLLER"]="1";p.Tags["BACON_DUO_TEAMMATE_PLAYER_ID"]="2";p.Tags["NEXT_OPPONENT_PLAYER_ID"]="3";p.Tags["NEXT_OPPONENT_TEAMMATE_PLAYER_ID"]="4";
+ var enemy=s.E(11);enemy.Tags["CARDTYPE"]="PLAYER";enemy.Tags["PLAYER_ID"]="9";enemy.Tags["CONTROLLER"]="9";enemy.Tags["BACON_DUMMY_PLAYER"]="1";
+ Action<int,int,int,int> setup=(player,ctrl,pid,id)=>{var h=s.E(id);h.CardId="TB_BaconShop_HERO_PH";h.Tags["CARDTYPE"]="HERO";h.Tags["CONTROLLER"]=ctrl.ToString();h.Tags["PLAYER_ID"]=pid.ToString();h.Tags["ZONE"]="PLAY";s.E(player).Tags["HERO_ENTITY"]=id.ToString();s.E(player).Tags["BACON_CURRENT_COMBAT_PLAYER_ID"]=pid.ToString();};setup(10,1,1,20);setup(11,9,3,21);
+ var unit=s.E(50);unit.CardId="BG20_100";unit.Tags["CARDTYPE"]="MINION";unit.Tags["CONTROLLER"]="1";unit.Tags["ZONE"]="PLAY";unit.Tags["ZONE_POSITION"]="1";unit.Tags["ATK"]="8";unit.Tags["HEALTH"]="8";
+ var hidden=s.E(51);hidden.CardId="BG20_100";hidden.Tags["CARDTYPE"]="MINION";hidden.Tags["ZONE"]="SETASIDE";hidden.Tags["CONTROLLER"]="1";
+ s.Feed("D 12:00:00 PowerTaskList.DebugPrintPower() - TAG_CHANGE Entity=GameEntity tag=TURN value=2");s.DuosCapture.Ready(s);check(s.TeamBoards.Count==2&&s.Fights.Count==0,"no partial Solo odds");check(s.LastFights[1].Enemy.Count==1,"reserve copies excluded");unit.Tags["ATK"]="1";unit.Tags["ZONE"]="GRAVEYARD";setup(10,1,2,22);setup(11,9,4,23);s.DuosCapture.Ready(s);check(s.Fights.Count==1&&s.TeamBoards.Count==4,"four revealed warbands make team snapshot");check(s.CurrentFight.Friendly[0].N("ATK")==8,"opening stats immutable");check(s.CurrentFight.FriendlyPartner.Board.Count==0&&s.CurrentFight.EnemyPartner.Board.Count==0,"revealed empty reserve is valid");check(s.CurrentFight.FriendlyFirst&&s.CurrentFight.EnemyFirst,"entry order captured");s.DuosCapture.Ready(s);check(s.Fights.Count==1,"no duplicate simulation");
+ var rect=new Rectangle(0,0,1920,1080);for(int team=0;team<4;team++)check(DuosHistoryPopup.TeamAt(new Point(260,(int)(1080*.15+team*(1080*.69*.863/4+1080*.69*.137/3)+20)),rect)==team+1,"Duos team hover geometry");return count;
+ }
+}
+}
+

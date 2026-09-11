@@ -1,0 +1,15 @@
+using System;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+namespace TavernLens {
+public static class SidebarTests {
+ public static int Run(){int count=0;Action<bool,string> check=(ok,name)=>{if(!ok)throw new Exception("Sidebar test failed: "+name);count++;};
+ var scenes=new SceneState();scenes.Feed("LoadingScreen.OnSceneLoaded() - prevMode=HUB currMode=BACON");check(scenes.InLobby,"lobby recognized");scenes.Feed("LoadingScreen.OnScenePreUnload() - prevMode=BACON nextMode=GAMEPLAY");check(scenes.Loading&&!scenes.InLobby,"hide at preload, before gameplay arrives");scenes.Feed("LoadingScreen.OnSceneLoaded() - m_assetLoadStartTimestamp=1");check(scenes.Loading,"unrelated line cannot complete loading");scenes.Feed("LoadingScreen.OnSceneLoaded() - prevMode=BACON currMode=GAMEPLAY");check(!scenes.Loading&&!scenes.InLobby,"gameplay hides session");scenes.Feed("LoadingScreen.OnSceneLoaded() - prevMode=GAMEPLAY currMode=BACON");check(scenes.InLobby,"return to lobby restores session");scenes.Feed("LoadingScreen.OnSceneLoaded() - prevMode=BACON currMode=HUB");check(!scenes.InLobby,"hub is not battlegrounds lobby");
+ var session=new SessionData();check(!session.CurrentRating.HasValue&&!session.StartRating.HasValue,"unknown rating stays unknown");session.Add(new MatchRecord{key="fixture",placement=3});session.Add(new MatchRecord{key="fixture",placement=3});check(session.Games.Count==1,"session deduplicates results");session.CurrentRating=4067;var copy=Store.Json().Deserialize<SessionData>(Store.Json().Serialize(session));check(copy.CurrentRating==4067&&copy.Games.Count==1,"session JSON round trip");copy.Reset();check(copy.Games.Count==0&&copy.StartRating==4067,"session reset carries current manual rating");
+ using(var main=new Main())using(var fixture=new Form{Bounds=new Rectangle(40,40,1100,760)}){fixture.Show();Application.DoEvents();main.Settings.OverlayEnabled=true;main.Scenes.Feed("LoadingScreen.OnSceneLoaded() - currMode=BACON");main.Overlay.Follow(fixture.Handle,true);check(main.Overlay.SessionBox.Visible,"left panel visible in lobby");main.Scenes.Feed("LoadingScreen.OnScenePreUnload() - nextMode=GAMEPLAY");main.Overlay.Follow(fixture.Handle,false);check(!main.Overlay.SessionBox.Visible&&!main.Overlay.Visible,"all panels hide for loading");main.Scenes.Feed("LoadingScreen.OnSceneLoaded() - currMode=GAMEPLAY");main.Overlay.Follow(fixture.Handle,true);check(!main.Overlay.SessionBox.Visible,"session stays hidden in gameplay");main.Overlay.Guide.SelectMode(1);check(main.Overlay.Guide.Mode==1,"build navigation");main.Overlay.Guide.Collapsed=true;main.Overlay.Follow(fixture.Handle,true);check(main.Overlay.Height==54,"minimized guide retains toolbar");main.Overlay.Guide.Collapsed=false;main.Overlay.Follow(fixture.Handle,true);check(main.Overlay.Height>400,"guide restores vertical list");main.Overlay.SetInteractive(false);check((Native.GetWindowLong(main.Overlay.SessionBox.Handle,-20)&0x20)!=0,"session also becomes click through");main.Overlay.Follow(fixture.Handle,false);fixture.Close();}
+ return count;
+ }
+}
+}

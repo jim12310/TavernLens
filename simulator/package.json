@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@firestone-hs/reference-data": "^3.0.207",
+    "@firestone-hs/simulate-bgs-battle": "^1.1.750"
+  }
+}

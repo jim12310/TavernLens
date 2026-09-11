@@ -1,0 +1,16 @@
+# Local state and generated data
+/data/*
+!/data/.gitkeep
+node_modules/
+runtime/
+*.dll
+*.exe
+*.pdb
+*.zip
+*.log
+.env
+.env.*
+error.txt
+.vs/
+bin/
+obj/
