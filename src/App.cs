@@ -91,7 +91,7 @@ public class Main : Form {
  "TAVERNLENS — GET CONNECTED","",
  "Exit the previous TavernLens from its tray menu, then run TavernLens.exe. Use Solo or Duos Battlegrounds in windowed or borderless mode.","",
  "Minions opens the illustrated tribe/tavern-tier browser. Builds opens illustrated core and optional cards. Fights opens the latest recorded board for each opponent. Hover a native leaderboard portrait for a row of remembered minion pictures.","",
- "Ctrl+Shift+O shows/hides everything. Ctrl+Shift+Space locks/unlocks interaction. Ctrl+Shift+D opens the dashboard. Closing the dashboard keeps the tray app running.","",
+ "Hold ALT and drag any overlay panel to move it. Positions are saved. Ctrl+Shift+O shows/hides everything. Ctrl+Shift+Space locks/unlocks interaction. Ctrl+Shift+D opens the dashboard. Closing the dashboard keeps the tray app running.","",
  "Hearthstone folder: "+Settings.HearthstonePath,"Logging configuration: "+(TrackingSetup.Enabled()?"Enabled":"Missing or incomplete — click Enable tracking"),"Log: "+(String.IsNullOrEmpty(logPath)?"Not found — enter a match after restarting Hearthstone":logPath),"",
  "COMBAT ODDS","",
  "Firestone simulator 1.1.750 runs locally, up to 1,500 simulations per combat. The panel shows win, draw and loss estimates once minion attacks begin. Previous-fight results are labeled during recruitment.","",
