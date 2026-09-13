@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -77,7 +77,7 @@ public class HistoryPopup : Floating {
  public HistoryPopup(Main m){main=m;PassThrough(true);}
  public void Display(FightSnapshot f,string empty,Rectangle game){fight=f;message=empty;int width=Math.Min(f==null?380:920,game.Width-90),height=f==null?68:Math.Min(252,game.Height/3);Place(new Rectangle(game.X+(game.Width-width)/2,game.Y+18,width,height));if(f!=null)ArtCache.Request(f.Enemy.Select(e=>RecordedCard.ArtId(e,main.Catalog)),main.Catalog.Cards.build);Invalidate();}
  protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);using(var font=Theme.Font(12,true)){string title=fight==null?message:main.Catalog.Name(fight.HeroId)+" · last seen turn "+fight.Turn+" · "+Math.Max(0,main.State.Turn-fight.Turn)+" turns ago";TextRenderer.DrawText(e.Graphics,title,font,new Rectangle(12,8,Width-24,30),Theme.Gold,TextFormatFlags.EndEllipsis);}
-  if(fight==null)return;int count=fight.Enemy.Count;if(count==0){using(var f=Theme.Font())TextRenderer.DrawText(e.Graphics,"No minions on the recorded board",f,new Point(18,55),Theme.Muted);return;}int tileWidth=Math.Min(126,(Width-20)/7),left=(Width-tileWidth*count)/2;for(int i=0;i<count;i++){var unit=fight.Enemy[i];var image=ArtCache.Get(RecordedCard.ArtId(unit,main.Catalog),main.Catalog.Cards.build);var rect=new Rectangle(left+i*tileWidth,40,tileWidth-4,Height-49);if(image!=null)RecordedCard.Draw(e.Graphics,image,rect,unit);else using(var f=Theme.Font(9))TextRenderer.DrawText(e.Graphics,main.Catalog.Name(unit.CardId),f,rect,Theme.Ink,TextFormatFlags.WordBreak);}
+  if(fight==null)return;int count=fight.Enemy.Count;if(count==0){using(var f=Theme.Font())TextRenderer.DrawText(e.Graphics,"No minions on the recorded board",f,new Point(18,55),Theme.Muted);return;}int tileWidth=Math.Min(126,(Width-20)/7),left=(Width-tileWidth*count)/2;for(int i=0;i<count;i++){var unit=fight.Enemy[i];var image=ArtCache.Get(RecordedCard.ArtId(unit,main.Catalog),main.Catalog.Cards.build);var rect=new Rectangle(left+i*tileWidth,40,tileWidth-4,Height-49);if(image!=null)RecordedCard.Draw(e.Graphics,image,rect,unit,RecordedCard.Golden(unit,main.Catalog));else using(var f=Theme.Font(9))TextRenderer.DrawText(e.Graphics,main.Catalog.Name(unit.CardId),f,rect,Theme.Ink,TextFormatFlags.WordBreak);}
  }
 }
 public class OddsBar : Floating {
