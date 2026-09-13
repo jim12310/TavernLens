@@ -1,6 +1,7 @@
 using System;using System.Collections.Concurrent;using System.Drawing;using System.IO;using System.Net;using System.Threading;using System.Threading.Tasks;using System.Text.RegularExpressions;
 namespace TavernLens {
 public static class PortraitCache {
+ static PortraitCache(){ServicePointManager.SecurityProtocol=(SecurityProtocolType)3072;}
  static readonly ConcurrentDictionary<string,Image> images=new ConcurrentDictionary<string,Image>();
  static readonly ConcurrentDictionary<string,DateTime> requested=new ConcurrentDictionary<string,DateTime>();
  static readonly SemaphoreSlim slots=new SemaphoreSlim(4);class PortraitClient:WebClient {protected override WebRequest GetWebRequest(Uri address){var request=base.GetWebRequest(address);request.Timeout=10000;return request;}}
