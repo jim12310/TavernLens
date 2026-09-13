@@ -9,10 +9,10 @@ public static class RecordedCard {
  static Bitmap Icon(string name){Bitmap image;if(icons.TryGetValue(name,out image))return image;string file=Path.Combine(Store.Root,"assets","status",name+".png");if(!File.Exists(file))return null;image=new Bitmap(file);icons[name]=image;return image;}
  static void Layer(Graphics g,string name){var image=Icon(name);if(image!=null)g.DrawImage(image,new RectangleF(0,0,300,350));}
  // Keep the original transparent canvases: each effect aligns with the entire board portrait.
- public static void Draw(Graphics g,Image art,Rectangle box,Entity unit,bool golden=false){var saved=g.Save();try{float scale=Math.Min(box.Width/325f,box.Height/350f);g.TranslateTransform(box.X+(box.Width-300*scale)/2,box.Y);g.ScaleTransform(scale,scale);g.InterpolationMode=InterpolationMode.HighQualityBicubic;g.SmoothingMode=SmoothingMode.AntiAlias;
+ public static void Draw(Graphics g,Image art,Rectangle box,Entity unit,bool golden=false){var saved=g.Save();try{float scale=Math.Min(box.Width/325f,box.Height/310f);g.TranslateTransform(box.X+(box.Width-300*scale)/2,box.Y-20*scale);g.ScaleTransform(scale,scale);g.InterpolationMode=InterpolationMode.HighQualityBicubic;g.SmoothingMode=SmoothingMode.AntiAlias;
   string premium=golden?"_premium":"";
   if(unit.N("TAUNT")>0)Layer(g,"taunt"+premium);
-  var portrait=g.Save();using(var ellipse=new GraphicsPath()){ellipse.AddEllipse(65,44,174,240);g.SetClip(ellipse,CombineMode.Intersect);g.DrawImage(art,new RectangleF(24,36,256,256),new RectangleF(art.Width*.25f,art.Height*.075f,art.Width*.50f,art.Height*.44f),GraphicsUnit.Pixel);}g.Restore(portrait);
+  var portrait=g.Save();using(var ellipse=new GraphicsPath()){ellipse.AddEllipse(65,44,174,240);g.SetClip(ellipse,CombineMode.Intersect);g.DrawImage(art,new RectangleF(24,36,256,256),new RectangleF(0,0,art.Width,art.Height),GraphicsUnit.Pixel);}g.Restore(portrait);
   Layer(g,"border"+premium);
   if(unit.N("REBORN")>0)Layer(g,"reborn");
   if(unit.N("DIVINE_SHIELD")>0){var shield=Icon("divine-shield");if(shield!=null)g.DrawImage(shield,new RectangleF(-12,12,325,311));}

@@ -10,7 +10,7 @@ public static class Tests {
  static int count;static void Check(bool ok,string name){if(!ok)throw new Exception("TEST FAILED: "+name);count++;}
  static string P(string s){return "D 12:00:00.0000000 PowerTaskList.DebugPrintPower() - "+s;}
  public static void Run(string[] args){
-  count+=BuffTests.Run();count+=CrownTests.Run();count+=DuosTests.Run();count+=BoardTests.Run();var output=args.Length>0?args[0]:Path.Combine(Store.Root,"test-results.json");
+  count+=GoldTests.Run();count+=BuffTests.Run();count+=CrownTests.Run();count+=DuosTests.Run();count+=BoardTests.Run();var output=args.Length>0?args[0]:Path.Combine(Store.Root,"test-results.json");
   var s=new MatchState{Stream=@"C:\Logs\Hearthstone_2026_09_11_12_00_00\Power.log"};var records=new List<MatchRecord>();s.OnComplete=records.Add;
   s.Feed("D 12:00:00 GameState.DebugPrintGame() - GameType=GT_BATTLEGROUNDS");
   s.Feed("D 12:00:00 GameState.DebugPrintGame() - PlayerID=1, PlayerName=Local Test");

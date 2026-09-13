@@ -90,7 +90,7 @@ public class MatchState {public DuosCapture DuosCapture=new DuosCapture();public
   m=tag.Match(s);if(m.Success&&CurrentId>0){Set(E(CurrentId),m.Groups[1].Value,m.Groups[2].Value);return;}
   CurrentId=0;
  }
- void Set(Entity e,string key,string value){
+ void Set(Entity e,string key,string value){if(key=="3148")key="BACON_MAX_RESOURCES";if(key=="4286")key="BACON_PLAYER_EXTRA_GOLD_NEXT_TURN";if(key=="4287")key="BACON_PLAYER_OVERDRAWN_GOLD_NEXT_TURN";
   if(Duos&&e.Id==GameId&&key=="TURN"&&Int32.Parse(value)>0&&Int32.Parse(value)%2==0)DuosCapture.Begin(this);
   int previous=e.N(key);e.Tags[key]=value;if(Duos&&e.Id==GameId&&key=="3533"&&previous==1&&value=="0")DuosCapture.Ready(this);if(e.S("CARDTYPE")=="HERO"&&e.N("PLAYER_ID")>0&&e.N("PLAYER_TECH_LEVEL")>0){int pid=e.N("PLAYER_ID");List<TierVisit> list;if(!TierHistory.TryGetValue(pid,out list)){list=new List<TierVisit>();TierHistory[pid]=list;}int tier=e.N("PLAYER_TECH_LEVEL");if(list.Count==0||list.Last().Tier!=tier)list.Add(new TierVisit{Turn=Turn,Tier=tier});}
   if(e.Id==GameId&&key=="STEP"&&value=="MAIN_ACTION"&&Phase=="Combat")CaptureFight();
