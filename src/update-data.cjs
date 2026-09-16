@@ -36,11 +36,17 @@ function patch(html) {
  const entries=JSON.parse(m[1]).filter(x=>/patch|hotfix/i.test(x.title)).sort((a,b)=>b.publish-a.publish);
  if(!entries.length)throw Error('No official patch article found');const p=entries[0];return {title:p.title,date:new Date(p.publish).toISOString(),url:`https://hearthstone.blizzard.com/en-us/news/${p.id}/${p.slug}`,version:(p.title.match(/\d+\.\d+(?:\.\d+)?/)||[])[0]||'Unknown'};
 }
+function liveCards(all,build,now=Date.now()) {
+ const gate=require('./release-overrides.json');
+ if(build!==gate.build||now>=Date.parse(gate.until))return all;
+ const previous=new Map(gate.previous.map(c=>[c.id,c])),unreleased=new Set(gate.unreleased);
+ return all.map(c=>previous.get(c.id)||(unreleased.has(c.id)?{...c,isBattlegroundsPoolMinion:false,isBattlegroundsPoolSpell:false,isBattlegroundsHero:false}:c));
+}
 async function update() {
  fs.mkdirSync(data,{recursive:true});const status={checkedAt:new Date().toISOString(),errors:[]};
  try {
   const listing=await get('https://api.hearthstonejson.com/v1/latest/');const build=listing.match(/\/v1\/(\d+)\//)?.[1];if(!build)throw Error('Card build unavailable');
-  const all=JSON.parse(await get(`https://api.hearthstonejson.com/v1/${build}/enUS/cards.json`));if(!Array.isArray(all)||all.length<10000)throw Error('Incomplete card database');
+  const all=liveCards(JSON.parse(await get(`https://api.hearthstonejson.com/v1/${build}/enUS/cards.json`)),build);if(!Array.isArray(all)||all.length<10000)throw Error('Incomplete card database');
   const cards=all.filter(c=>c.set==='BATTLEGROUNDS'||c.battlegroundsPremiumDbfId||c.battlegroundsNormalDbfId||c.isBattlegroundsHero||c.id.startsWith('TB_Bacon')).map(c=>({id:c.id,dbfId:c.dbfId,name:c.name||c.id,text:plain(c.text||''),type:c.type,tribe:(c.races||[]).join(' / '),tier:c.techLevel||0,attack:c.attack||0,health:c.health||0,duosOnly:!!c.isBattlegroundsDuosExclusive,solosOnly:!!c.isBattlegroundsSolosExclusive,pool:!!c.isBattlegroundsPoolMinion,hero:!!c.isBattlegroundsHero,spell:!!c.isBattlegroundsPoolSpell,normal:c.battlegroundsNormalDbfId||0,premium:c.battlegroundsPremiumDbfId||0}));
   atomic('combat-cards.json',{build,cards:all});atomic('cards.json',{build,updatedAt:status.checkedAt,cards});status.cardBuild=build;
  } catch(e){status.errors.push('Cards: '+e.message);}
@@ -62,5 +68,5 @@ async function update() {
  }catch(e){status.errors.push('Duos rankings: '+e.message);}
  atomic('update-status.json',status);console.log(JSON.stringify(status));if(status.errors.length)process.exitCode=2;
 }
-module.exports={heroes,comps,board,patch,plain};
+module.exports={heroes,comps,board,patch,plain,liveCards};
 if(require.main===module)update().catch(e=>{console.error(e.message);process.exitCode=1;});
