@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace TavernLens {
 public class UpdateManifest { public string version,url,sha256,notes; }
 public static class AutoUpdater {
- public const string CurrentVersion="1.0.7";
+ public const string CurrentVersion="1.0.8";
  const string ManifestUrl="https://tavernlens.pages.dev/update.json";
  static bool checking;
  public static async void Check(Main owner){

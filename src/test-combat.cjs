@@ -7,5 +7,6 @@ r=simulate(fight([minion(50,1,1,1)],[minion(60,9,1,1)]));assert.equal(r.draw,100
 r=simulate(fight([minion(50,1,1,1,'BG20_100',{DIVINE_SHIELD:'1'})],[minion(60,9,1,1)]));assert.equal(r.win,100);
 r=simulate(fight([minion(50,1,1,1,'BG_EX1_556')],[minion(60,9,1,1)]));assert.equal(r.win,100,'Harvest Golem must summon a surviving deathrattle minion');
 r=simulate(fight([minion(50,1,1,1)],[minion(60,9,10,10)]));assert.equal(r.loss,100);assert.equal(r.win+r.draw+r.loss,100);
+r=simulate(fight([minion(50,1,2,4,'BG36_098')],[minion(60,9,1,1)]));assert.equal(r.win+r.draw+r.loss,100,'Current Aberration cards must be accepted by the simulator');
 assert.throws(()=>simulate(fight([minion(50,1,1,1,'UNKNOWN_CARD')],[minion(60,9,1,1)])));
-process.stdout.write('8 combat assertions passed, including divine shield and deathrattle.\n');
+process.stdout.write('9 combat assertions passed, including divine shield, deathrattle and current Aberrations.\n');
