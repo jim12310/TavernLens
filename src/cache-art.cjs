@@ -29,7 +29,7 @@ async function cache(ids){
   let r;try{r=await get(url);}catch(e){if(c.type==='MINION')throw e;url=`https://art.hearthstonejson.com/v1/render/latest/enUS/256x/${id}.png`;try{r=await get(url);}catch(e){if(c.type!=='HERO')throw e;url=`https://art.hearthstonejson.com/v1/orig/${id}.png`;r=await get(url);}}if(r.headers.get('X-Image-Fallback'))throw Error('Incorrect image variant');
   const bytes=Buffer.from(await r.arrayBuffer());if(bytes.length>3000000)throw Error('Oversized image');
   const info=await sharp(bytes).metadata();if(!info.width||(c.type!=='HERO'&&(info.width/info.height>0.85||info.width/info.height<0.5)))throw Error('Not a full card render');
-  const image=await sharp(bytes).png().toBuffer();const file=path.join(dir,id+'.png');fs.writeFileSync(file+'.tmp',image);fs.renameSync(file+'.tmp',file);
+  const image=await sharp(bytes).png({compressionLevel:9,adaptiveFiltering:true}).toBuffer();const file=path.join(dir,id+'.png');fs.writeFileSync(file+'.tmp',image);fs.renameSync(file+'.tmp',file);
   fs.writeFileSync(file+'.json',JSON.stringify({id,dbfId:c.dbfId,normal:c.normal,premium:c.premium,attack:c.attack,health:c.health,text:c.text,build:meta.build,provider,url,checkedAt:new Date().toISOString()}));ok++;
  }catch(e){failed++;errors.push(id+': '+e.message);}}}
  await Promise.all(Array.from({length:4},worker));return {ok,failed,build:meta.build,errors};

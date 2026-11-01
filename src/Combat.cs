@@ -75,7 +75,7 @@ namespace TavernLens
 
                     string text = stdout.Result;
                     if (p.ExitCode != 0)
-                        throw new Exception("Simulation failed; no odds available");
+                        throw new Exception(Explain(stderr.Result));
                     p.Dispose();
                     return text;
                 });
@@ -94,6 +94,17 @@ namespace TavernLens
             {
                 Busy = false;
             }
+        }
+
+        // Turns the simulator's refusal reasons into messages players can act on; anything unexpected stays generic.
+        public static string Explain(string stderr)
+        {
+            string text = stderr ?? "";
+            if (text.Contains("New card build"))
+                return "Odds paused: Hearthstone updated and this game build hasn't passed TavernLens's combat checks yet. They return automatically once it does.";
+            if (text.Contains("Simulator card data is stale"))
+                return "Odds paused while card data refreshes.";
+            return "Simulation failed; no odds available";
         }
     }
 }

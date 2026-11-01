@@ -26,6 +26,7 @@ namespace TavernLens
         public static void Run(string[] args)
         {
             count += UpdaterTests.Run();
+            count += HeroOrderTests.Run();
             count += GoldTests.Run();
             count += BuffTests.Run();
             count += CrownTests.Run();

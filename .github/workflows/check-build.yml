@@ -1,0 +1,46 @@
+# Checks for a new Hearthstone card build and, when every simulator test passes against it, approves it in
+# simulator/compatibility.json. Installed TavernLens copies read that file hourly, so combat odds resume after a
+# patch without a new release. A failing run means the build needs manual attention (GitHub emails the owner).
+name: Check new Hearthstone build
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: check-build
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install the pinned simulator
+        run: npm ci --prefix simulator
+
+      - name: Download current card data
+        run: node src/update-data.cjs
+
+      - name: Test the build and approve it if everything passes
+        id: check
+        run: node .github/scripts/check-build.cjs
+
+      - name: Commit the approval
+        if: steps.check.outputs.approved == 'true'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add simulator/compatibility.json
+          git commit -m "Approve card build ${{ steps.check.outputs.build }} for combat odds (all simulator tests passed)"
+          git push

@@ -1,0 +1,8 @@
+[
+  {
+    "id": "BG26_810",
+    "card": "Gunpowder Courier",
+    "since": "255790",
+    "reason": "Art source hsbg.cards says 'Whenever you spend 6 Gold'; the official HearthstoneJSON data says 5. Art stays withheld until the sources agree."
+  }
+]

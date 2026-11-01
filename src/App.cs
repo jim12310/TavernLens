@@ -371,6 +371,7 @@ namespace TavernLens
                 fresh.Text = Catalog.Freshness;
                 connection.Text = "WAITING FOR HEARTHSTONE";
                 AutoUpdater.Check(this);
+                ArtCleanup.PruneInBackground(Catalog.Cards.build);
             };
             FormClosing += (s, e) =>
             {
@@ -915,10 +916,12 @@ namespace TavernLens
 
                     int code = p.ExitCode;
                     p.Dispose();
+                    RemoteCompatibility.Sync();
                     return code;
                 });
                 var refreshed = await Task.Run(() => new Catalog());
                 Catalog.Adopt(refreshed);
+                ArtCleanup.PruneInBackground(Catalog.Cards.build);
                 Populate();
                 error = result == 0 ? "" : "Some sources could not refresh. See Setup and sources.";
             }

@@ -10,6 +10,7 @@ namespace TavernLens
     {
         readonly Main main;
         readonly List<HeroBadge> badges = new List<HeroBadge>();
+        List<string> lockedOrder = new List<string>();
         public HeroChoices(Main m)
         {
             main = m;
@@ -38,6 +39,23 @@ namespace TavernLens
             return new Rectangle(game.X + game.Width / 2 + (int)((index - (count - 1) / 2.0) * 342 * scale) - width / 2, game.Y + (int)(game.Height * .225), Math.Max(125, width), Math.Max(44, height));
         }
 
+        // Badge order, left to right. Live hand positions are only trusted while every offered hero is in hand: during the
+        // reveal animation heroes briefly leave the hand, and once you pick, your hero leaves it for good while the others
+        // shift down. Re-sorting then would move badges onto different heroes, so the last complete order is kept for the
+        // same set of heroes. A reroll changes the set and re-sorts.
+        public static List<string> Order(MatchState state, List<string> previous)
+        {
+            var ids = state.Choices.OrderBy(id => Position(state, id)).Take(4).ToList();
+            bool allInHand = ids.All(id => InHand(state, id));
+            bool sameHeroes = previous != null && previous.Count == ids.Count && !previous.Except(ids).Any();
+            return !allInHand && sameHeroes ? previous : ids;
+        }
+
+        static bool InHand(MatchState state, string id)
+        {
+            return state.Entities.Values.Any(e => e.CardId == id && e.S("ZONE") == "HAND" && e.N("CONTROLLER") == state.Controller && e.N("ZONE_POSITION") > 0);
+        }
+
         public static int Position(MatchState state, string id)
         {
             var entity = state.Entities.Values.Where(e => e.CardId == id && e.S("ZONE") == "HAND" && e.N("CONTROLLER") == state.Controller && e.N("ZONE_POSITION") > 0).OrderByDescending(e => e.Id).FirstOrDefault();
@@ -52,7 +70,8 @@ namespace TavernLens
                 return;
             }
 
-            var ids = main.State.Choices.OrderBy(id => Position(main.State, id)).Take(4).ToList();
+            var ids = Order(main.State, lockedOrder);
+            lockedOrder = ids;
             while (badges.Count < ids.Count)
                 badges.Add(new HeroBadge());
             for (int i = 0; i < badges.Count; i++)
