@@ -63,7 +63,45 @@ namespace TavernLens
             s.Complete = false;
             s.Feed("D 12:00:00 PowerTaskList.DebugPrintPower() - CREATE_GAME");
             Check(BuffValues.Read(s).Spells == "— / —");
-            using (var image = new Bitmap(640, 90))
+            // Beetles, Tavern minions, Tavern Elementals and Undead (patterns taken from real logs)
+            var t = new MatchState
+            {
+                Stream = @"C:\Logs\Power.log",
+                Started = true,
+                Mode = "GT_BATTLEGROUNDS"
+            };
+            var tp = t.E(2);
+            tp.Tags["CARDTYPE"] = "PLAYER";
+            tp.Tags["PLAYER_ID"] = "1";
+            tp.Tags["CONTROLLER"] = "1";
+            Check(BuffValues.Read(t).ActiveChips().Count == 0);
+            tp.Tags["3874"] = "6";
+            tp.Tags["3924"] = "5";
+            Check(BuffValues.Read(t).BeetleActive && BuffValues.Read(t).ActiveChips()[0].Value == "+6 / +5"); // Forest Rover then Ravaging Scorpid
+            Func<int, string, string, int, int, Entity> enchant = (id, card, zone, atk, hp) =>
+            {
+                var en = t.E(id);
+                en.CardId = card;
+                en.Tags["ATTACHED"] = "2";
+                en.Tags["ZONE"] = zone;
+                en.Tags["TAG_SCRIPT_DATA_NUM_1"] = atk.ToString();
+                en.Tags["TAG_SCRIPT_DATA_NUM_2"] = hp.ToString();
+                return en;
+            };
+            enchant(40, "BG_ShopBuff", "PLAY", 66, 132);
+            enchant(41, "BG_ShopBuff", "PLAY", 66, 132); // a fresh copy holding the same total: not added twice
+            enchant(42, "BG_ShopBuff", "REMOVEDFROMGAME", 99, 99); // removed buffs no longer count
+            Check(BuffValues.Read(t).TavernAttack == 66 && BuffValues.Read(t).TavernHealth == 132);
+            enchant(43, "BG_ShopBuff_Elemental", "PLAY", 263, 184);
+            Check(BuffValues.Read(t).ElementalAttack == 263 && BuffValues.Read(t).ElementalHealth == 184);
+            var other = enchant(44, "BG_ShopBuff_Elemental", "PLAY", 500, 500);
+            other.Tags["ATTACHED"] = "3"; // another player's buff is ignored
+            Check(BuffValues.Read(t).ElementalAttack == 263);
+            enchant(45, "BG25_011pe", "PLAY", 6, 0);
+            Check(BuffValues.Read(t).Undead == "+6 ATK");
+            var order = BuffValues.Read(t).ActiveChips();
+            Check(order.Count == 4 && order[0].Key == ChipKind.Beetle && order[1].Key == ChipKind.Tavern && order[2].Key == ChipKind.Elemental && order[3].Key == ChipKind.Undead);
+            using (var image = new Bitmap(850, 160))
             using (var g = Graphics.FromImage(image))
             {
                 g.Clear(Color.FromArgb(24, 23, 29));
@@ -71,6 +109,10 @@ namespace TavernLens
                 BuffCounters.DrawChip(g, new Rectangle(10, 10, 198, 64), ChipKind.Gem, "+3 / +6");
                 BuffCounters.DrawChip(g, new Rectangle(220, 10, 198, 64), ChipKind.Spell, "+3 / +6");
                 BuffCounters.DrawChip(g, new Rectangle(430, 10, 198, 64), ChipKind.Deity, "+180 / +176");
+                BuffCounters.DrawChip(g, new Rectangle(640, 10, 198, 64), ChipKind.Beetle, "+22 / +21");
+                BuffCounters.DrawChip(g, new Rectangle(10, 84, 198, 64), ChipKind.Tavern, "+73 / +146");
+                BuffCounters.DrawChip(g, new Rectangle(220, 84, 198, 64), ChipKind.Elemental, "+263 / +184");
+                BuffCounters.DrawChip(g, new Rectangle(430, 84, 198, 64), ChipKind.Undead, "+6 ATK");
                 image.Save(System.IO.Path.Combine(Store.Root, "Buff-Counters.png"));
             }
 

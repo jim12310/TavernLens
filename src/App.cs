@@ -1331,6 +1331,12 @@ namespace TavernLens
             Application.SetCompatibleTextRenderingDefault(false);
             try
             {
+                if (args.Length == 3 && args[0] == "--buff-replay")
+                {
+                    BuffReplay.Run(args[1], args[2]);
+                    return;
+                }
+
                 if (args.Length > 0 && args[0] == "--test")
                 {
                     Tests.Run(args.Skip(1).ToArray());
