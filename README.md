@@ -1,9 +1,3 @@
-# TavernLens
-
-A Windows overlay companion for Hearthstone Battlegrounds.
-
-Website and Windows installer: https://tavernlens.pages.dev/
-
 ## Features
 
 - Solo and Duos game detection and separate MMR tracking.
