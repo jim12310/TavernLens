@@ -33,7 +33,7 @@ Personal settings, ratings, match history, sessions, downloaded card caches, com
 
 ## Attribution
 
-Independent project, not affiliated with Blizzard, HearthSim, HSReplay or Firestone. Hearthstone card artwork, names and text belong to their respective owners. Public data adapters use HearthstoneJSON, Battlegrounds Buddy and other sources identified in the code. Combat simulation uses Firestone packages. See GAME-READER-NOTICE.txt and simulator/THIRD-PARTY-NOTICES.txt for third-party components.
+Independent project, not affiliated with Blizzard, HearthSim, HSReplay or Firestone. Hearthstone card artwork, names and text belong to their respective owners. Public statistics originate from [Firestone](https://www.firestoneapp.com/) and are used with permission. Cards and artwork use HearthstoneJSON. Retrieval adapters and their endpoints remain documented in the source; technical retrieval URLs are preserved separately from the statistics credit. Combat simulation uses Firestone packages. See GAME-READER-NOTICE.txt and simulator/THIRD-PARTY-NOTICES.txt for third-party components.
 
 No blanket license is granted here for third-party code or artwork. A project-wide license has not yet been selected.
 
