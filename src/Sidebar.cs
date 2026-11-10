@@ -751,7 +751,7 @@ namespace TavernLens
                     rows.Add(new RibbonRow { Title = "Optional pieces", Heading = true });
                     foreach (var id in selected.addons)
                         rows.Add(new RibbonRow { Title = main.Catalog.Name(id), CardId = id });
-                    rows.Add(new RibbonRow { Title = "Read the source guide", Click = () => Theme.Link(selected.url) });
+                    rows.Add(new RibbonRow { Title = "Statistics by Firestone", Click = () => Theme.Link(StatisticsCredit.Url) });
                     rows.Add(new RibbonRow { Title = selected.unranked ? "Unranked · no population stats" : "Solo statistics · shared guides", Heading = true });
                 }
             }

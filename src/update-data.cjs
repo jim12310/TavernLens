@@ -58,13 +58,13 @@ async function update() {
   if(!build||build!==compBuild)throw Error('Sources updated during refresh; retry later');
   const h=heroes(hs),c=comps(cs);if(h.length<30||c.length<5)throw Error('Source returned incomplete rankings');
   for(const comp of c) {try {const detail=await get(comp.url);if(detail.match(/Patch\s+(\d{5,})/)?.[1]!==build)throw Error('Build changed');Object.assign(comp,board(detail));comp.build=build;}catch(e){comp.detailError=e.message;comp.core=[];}}
-  atomic('meta.json',{build,updatedAt:status.checkedAt,sourceAge:plain(hs.match(/Updated\s+([^<]+)/)?.[0]||'Source age unavailable'),source:'Battlegrounds Buddy / Firestone community data',url:'https://bgbuddy.gg/about',scope:'Solo / all ranks / current source patch',heroes:h,comps:c});
+  atomic('meta.json',{build,updatedAt:status.checkedAt,sourceAge:plain(hs.match(/Updated\s+([^<]+)/)?.[0]||'Source age unavailable'),source:'Firestone public statistics · used with permission',url:'https://www.firestoneapp.com/',retrievalUrl:'https://bgbuddy.gg/about',scope:'Solo / all ranks / current source patch',heroes:h,comps:c});
  }catch(e){status.errors.push('Rankings: '+e.message);}
  try {
   const url='https://bgbuddy.gg/heroes?game_mode=duo&mmr_bracket=all&time_period=last-patch';
   const html=await get(url),h=heroes(html),build=html.match(/Patch\s+(\d{5,})/)?.[1];
   if(!build||h.length<30||h.some(x=>x.avg<1||x.avg>4))throw Error('Incomplete Duos team rankings');
-  atomic('meta-duos.json',{build,updatedAt:status.checkedAt,sourceAge:plain(html.match(/Updated\s+([^<]+)/)?.[0]||'Source age unavailable'),source:'Battlegrounds Buddy / Firestone community data',url,scope:'Duos / all ranks / team placement 1–4 / current source patch',heroes:h,comps:[]});
+  atomic('meta-duos.json',{build,updatedAt:status.checkedAt,sourceAge:plain(html.match(/Updated\s+([^<]+)/)?.[0]||'Source age unavailable'),source:'Firestone public statistics · used with permission',url:'https://www.firestoneapp.com/',retrievalUrl:url,scope:'Duos / all ranks / team placement 1–4 / current source patch',heroes:h,comps:[]});
  }catch(e){status.errors.push('Duos rankings: '+e.message);}
  atomic('update-status.json',status);console.log(JSON.stringify(status));if(status.errors.length)process.exitCode=2;
 }

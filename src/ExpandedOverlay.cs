@@ -488,11 +488,11 @@ namespace TavernLens
                 main.Overlay.Pinned = Builds.Text;
                 main.Overlay.Invalidate();
             }));
-            choose.Controls.Add(Theme.Button("Full guide", () =>
+            choose.Controls.Add(Theme.Button("Statistics by Firestone", () =>
             {
                 var c = main.Catalog.BuildMeta.comps.FirstOrDefault(x => x.name == Builds.Text);
                 if (c != null)
-                    Theme.Link(c.url);
+                    Theme.Link(StatisticsCredit.Url);
             }));
             Guide = new CardGallery(main.Catalog, zoom);
             g.Controls.Add(Guide);

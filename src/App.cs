@@ -475,11 +475,11 @@ namespace TavernLens
             };
             SearchStyle(heroSearch);
             bar.Controls.Add(heroSearch);
-            bar.Controls.Add(Theme.Button("Open selected source", () =>
+            bar.Controls.Add(Theme.Button("Statistics by Firestone", () =>
             {
                 var h = Selected<HeroRank>(heroes);
                 if (h != null)
-                    Theme.Link(h.url);
+                    Theme.Link(StatisticsCredit.Url);
             }));
             p.Controls.Add(bar);
             p.Controls.Add(Bar("Search hero names. Lower average placement is better. Selected mode · all ranks · source patch. These are population averages, not lobby-specific odds."));
@@ -520,11 +520,11 @@ namespace TavernLens
                 Overlay.Pinned = selectedComp;
                 Overlay.Invalidate();
             }));
-            actions.Controls.Add(Theme.Button("Full source guide", () =>
+            actions.Controls.Add(Theme.Button("Statistics by Firestone", () =>
             {
                 var c = Selected<Comp>(comps);
                 if (c != null)
-                    Theme.Link(c.url);
+                    Theme.Link(StatisticsCredit.Url);
             }));
             split.Panel2.Controls.Add(actions);
             p.Controls.Add(split);
@@ -644,7 +644,7 @@ namespace TavernLens
                     }
             }));
             bar.Controls.Add(Theme.Button("Open Blizzard news", () => Theme.Link("https://hearthstone.blizzard.com/en-us/news")));
-            bar.Controls.Add(Theme.Button("Source methodology", () => Theme.Link("https://bgbuddy.gg/about")));
+            bar.Controls.Add(Theme.Button("Firestone statistics", () => Theme.Link(StatisticsCredit.Url)));
             bar.Controls.Add(Theme.Button("Overlay smaller", () =>
             {
                 Settings.OverlayWidth = Math.Max(270, Settings.OverlayWidth - 25);
@@ -832,7 +832,7 @@ namespace TavernLens
             lines.Add("OPTIONAL PIECES");
             foreach (var id in c.addons)
                 lines.Add("• " + Catalog.Name(id));
-            lines.AddRange(new[] { "", "SETUP CHECKLIST", "Identify the core engine before committing. Keep room to buy and cycle cards. Use each card's current text to decide trigger order, and inspect the opponent before changing positioning.", "", "The source guide has the build-specific play pattern. Population placement does not predict your current board's combat result.", "", "Source: " + c.url, "Scope: " + Catalog.BuildMeta.scope });
+            lines.AddRange(new[] { "", "SETUP CHECKLIST", "Identify the core engine before committing. Keep room to buy and cycle cards. Use each card's current text to decide trigger order, and inspect the opponent before changing positioning.", "", "Population placement does not predict your current board's combat result.", "", "Statistics: " + StatisticsCredit.Name, "Scope: " + Catalog.BuildMeta.scope });
             if (!String.IsNullOrEmpty(c.detailError))
                 lines.Add("Board unavailable: " + c.detailError);
             if (c.unranked)
@@ -893,7 +893,7 @@ namespace TavernLens
 
         void UpdateSources()
         {
-            sources.Text = String.Join("\n", new[] { "TAVERNLENS — GET CONNECTED", "", "Exit the previous TavernLens from its tray menu, then run TavernLens.exe. Use Solo or Duos Battlegrounds in windowed or borderless mode.", "", "Minions opens the illustrated tribe/tavern-tier browser. Builds opens illustrated core and optional cards. Fights opens the latest recorded board for each opponent. Hover a native leaderboard portrait for a row of remembered minion pictures.", "", "Hold ALT and drag any overlay panel to move it. Positions are saved. Ctrl+Shift+O shows/hides everything. Ctrl+Shift+Space locks/unlocks interaction. Ctrl+Shift+D opens the dashboard. Closing the dashboard keeps the tray app running.", "", "Hearthstone folder: " + Settings.HearthstonePath, "Logging configuration: " + (TrackingSetup.Enabled() ? "Enabled" : "Missing or incomplete — click Enable tracking"), "Log: " + (String.IsNullOrEmpty(logPath) ? "Not found — enter a match after restarting Hearthstone" : logPath), "", "COMBAT ODDS", "", "Firestone simulator 1.1.750 runs locally, up to 1,500 simulations per combat. The panel shows win, draw and loss estimates once minion attacks begin. Previous-fight results are labeled during recruitment.", "", "EXPERIMENTAL: odds are conditional on visible log state. Unknown opponent hand, some global counters, Dark Gift state and unhandled effects can materially change the result. Sampling error is not the only source of error. Unknown cards, unsupported secret/quest/anomaly state, timeouts and new untested card builds withhold results.", "", "OPPONENT HISTORY", "", "Snapshots preserve minion order, card identity, attack, health and keywords at combat opening or before the first attack. Start-of-combat effects may already have happened. Boards are per opponent and reset for a new match. Hero-position mapping must be known from the log; an unmapped portrait does not show a guessed board.", "", "DATA SOURCES", "", Catalog.Freshness, "Card build: " + Catalog.Cards.build + " · checked " + Catalog.Cards.updatedAt, "Rankings: " + Catalog.Meta.source, Catalog.Meta.scope, "Retrieved: " + Catalog.Meta.updatedAt, "Official announcement: " + Catalog.Patch.title, Catalog.Patch.url, "", "Cards, rankings and patch news refresh on launch and hourly. Images are cached from HearthstoneJSON. Failed sources retain their last usable cache. Simulator program updates require compatibility testing; it will not silently claim support for a new card build.", String.Join("\n", Catalog.Status.errors), "", "LOGGING & LIMITS", "", "If the match log is missing, click Enable tracking here, then fully restart Hearthstone and enter a match. The running game installation is detected automatically when accessible; otherwise use Choose Hearthstone folder. All immediate log folders are checked, including the Logs root. Logging changes preserve other sections and create a backup.", "", "Combat snapshots remain local. No account names or log uploads are sent. Artwork requests contain card IDs in the image URLs. Public stats are all-ranks population data, and core-piece lists are not positioning instructions.", "", "Independent personal tool. Hearthstone art and card text belong to Blizzard. Statistics are attributed to Battlegrounds Buddy / Firestone community data. Simulator dependency notices are included in the simulator folder." });
+            sources.Text = String.Join("\n", new[] { "TAVERNLENS — GET CONNECTED", "", "Exit the previous TavernLens from its tray menu, then run TavernLens.exe. Use Solo or Duos Battlegrounds in windowed or borderless mode.", "", "Minions opens the illustrated tribe/tavern-tier browser. Builds opens illustrated core and optional cards. Fights opens the latest recorded board for each opponent. Hover a native leaderboard portrait for a row of remembered minion pictures.", "", "Hold ALT and drag any overlay panel to move it. Positions are saved. Ctrl+Shift+O shows/hides everything. Ctrl+Shift+Space locks/unlocks interaction. Ctrl+Shift+D opens the dashboard. Closing the dashboard keeps the tray app running.", "", "Hearthstone folder: " + Settings.HearthstonePath, "Logging configuration: " + (TrackingSetup.Enabled() ? "Enabled" : "Missing or incomplete — click Enable tracking"), "Log: " + (String.IsNullOrEmpty(logPath) ? "Not found — enter a match after restarting Hearthstone" : logPath), "", "COMBAT ODDS", "", "Firestone simulator 1.1.750 runs locally, up to 1,500 simulations per combat. The panel shows win, draw and loss estimates once minion attacks begin. Previous-fight results are labeled during recruitment.", "", "EXPERIMENTAL: odds are conditional on visible log state. Unknown opponent hand, some global counters, Dark Gift state and unhandled effects can materially change the result. Sampling error is not the only source of error. Unknown cards, unsupported secret/quest/anomaly state, timeouts and new untested card builds withhold results.", "", "OPPONENT HISTORY", "", "Snapshots preserve minion order, card identity, attack, health and keywords at combat opening or before the first attack. Start-of-combat effects may already have happened. Boards are per opponent and reset for a new match. Hero-position mapping must be known from the log; an unmapped portrait does not show a guessed board.", "", "DATA SOURCES", "", Catalog.Freshness, "Card build: " + Catalog.Cards.build + " · checked " + Catalog.Cards.updatedAt, "Rankings: " + Catalog.Meta.source, Catalog.Meta.scope, "Retrieved: " + Catalog.Meta.updatedAt, "Official announcement: " + Catalog.Patch.title, Catalog.Patch.url, "", "Cards, rankings and patch news refresh on launch and hourly. Images are cached from HearthstoneJSON. Failed sources retain their last usable cache. Simulator program updates require compatibility testing; it will not silently claim support for a new card build.", String.Join("\n", Catalog.Status.errors), "", "LOGGING & LIMITS", "", "If the match log is missing, click Enable tracking here, then fully restart Hearthstone and enter a match. The running game installation is detected automatically when accessible; otherwise use Choose Hearthstone folder. All immediate log folders are checked, including the Logs root. Logging changes preserve other sections and create a backup.", "", "Combat snapshots remain local. No account names or log uploads are sent. Artwork requests contain card IDs in the image URLs. Public stats are all-ranks population data, and core-piece lists are not positioning instructions.", "", "Independent personal tool. Hearthstone art and card text belong to Blizzard. Public statistics by Firestone, used with permission. Simulator dependency notices are included in the simulator folder." });
         }
 
         async void RefreshWeb()

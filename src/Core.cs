@@ -83,7 +83,7 @@ namespace TavernLens
 
     public class Meta
     {
-        public string build, updatedAt, sourceAge, source, url, scope;
+        public string build, updatedAt, sourceAge, source, url, retrievalUrl, scope;
         public List<HeroRank> heroes = new List<HeroRank>();
         public List<Comp> comps = new List<Comp>();
     }
@@ -145,6 +145,8 @@ namespace TavernLens
             Cards = Store.Read("cards.json", new CardData());
             SoloMeta = Store.Read("meta.json", new Meta());
             DuosMeta = Store.Read("meta-duos.json", new Meta());
+            StatisticsCredit.Apply(SoloMeta);
+            StatisticsCredit.Apply(DuosMeta);
             Patch = Store.Read("patch.json", new Patch());
             Status = Store.Read("update-status.json", new UpdateStatus());
             byId = Cards.cards.GroupBy(x => x.id).ToDictionary(x => x.Key, x => x.First());
